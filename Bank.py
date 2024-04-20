@@ -37,16 +37,10 @@ class AccountInfo:
             'Type': 'Withdrawal',
             'amount': amount
         })  
-        
-    
-        
-        
-        
-        
-    
+   
+   
     def __str__(self) -> str:
-        return f"the name is {self.Name} and the account number is {self.Account_no}"
-    
+        return f"the name is {self.Name} and the account number is {self.Account_no} the amount deposited is "
     
     
 
