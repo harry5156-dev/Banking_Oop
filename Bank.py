@@ -37,15 +37,38 @@ class AccountInfo:
             'Type': 'Withdrawal',
             'amount': amount
         })  
-   
-   
-    def __str__(self) -> str:
-        return f"the name is {self.Name} and the account number is {self.Account_no} the amount deposited is "
     
+    def transfer(self, bank_account):
+        pass
+
+    
+    def print_transactions(self):
+        for transaction in self.transaction:
+            print(f"\n{transaction['date']}: {transaction['type']} of {transaction['amount']}")
+
+    
+    def check_balances (self):
+        return self.balances
+    
+    
+    def Print_statement (self):
+        print('_________________________________________________________________________')  
+        print(f'\nThe account statement for {self.Name}, Account number {self.Account_no}') 
+        print('_________________________________________________________________________')  
+        for transactions in self.transaction:
+            print(f'\n{transactions['Date']} --- {transactions['Type']} --- {transactions['amount']}')
+    
+
     
 
 
 Acc1 = AccountInfo ('Harry')
-Acc1.deposite(input('Enter your account info:'))
+Acc2 = AccountInfo('james')
 print(Acc1)
+print(Acc2)
+Acc1.deposite(input('\nEnter your amount:'))
+Acc2.deposite(input('\nEnter your amount:'))
+Acc1.Print_statement()
+Acc2.Print_statement()
+
 
