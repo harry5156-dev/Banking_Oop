@@ -64,7 +64,7 @@ class AccountInfo:
 
 Acc1 = AccountInfo ('Harry')
 Acc2 = AccountInfo('james')
-print(Acc1)
+print(Acc1)  
 print(Acc2)
 Acc1.deposite(input('\nEnter your amount:'))
 Acc2.deposite(input('\nEnter your amount:'))
