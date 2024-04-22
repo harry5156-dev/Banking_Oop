@@ -67,45 +67,8 @@ class SavingAccount(BankAccount):
     pass
 
 
-class CurrentAccount(BankAccount):
-    def deposite(self, amount):
-        tax = amount * tax_amount
-        return super().deposite(amount - tax_amount)
-    
-    def withdrawal(self, amount):
-        tax = amount * tax_amount
-        return super().deposite(amount + tax_amount)
-
-class FixedAccount(BankAccount):
-    def __init__(self, Account_no, Name):
-        super().__init__(Account_no, Name)
-        self.lock = True
-        
-    def unlock(self):
-       self.unlock = True
-
-    def lock(self):
-       self.unlock = False
-
-    def withdrawal(self, amount):
-        if not self.lock:
-            return super().withdrawal(amount)
-        
-        else:
-            print("Withdrawal not allowed: Account is locked.")
-    
-    
-    def print_statement(bank_acc):
-        bank_acc.statement()
-
-    def print_balance(bank_acc):
-        print(f'{bank_acc.name} balance is {bank_acc.check_balance()}')
-        
-
-    
-Acc1 = BankAccount ('Harry')
-Acc2 = BankAccount('james')
-ACC_fixed = FixedAccount('harry')
+Acc1 = AccountInfo ('Harry')
+Acc2 = AccountInfo('james')
 print(Acc1)
 print(Acc2)
 #Acc1.deposite(input('\nEnter your amount:'))
