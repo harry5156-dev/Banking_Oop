@@ -1,81 +1,206 @@
-import random 
-from datetime import datetime
+import random
+from datetime import datetime, date
 
-
-#Global variable
+# Global variable for fixed date and tax amount
+fixed_date = date(2025, 4, 24)
 tax_amount = 0.05
-#-------------------
 
 class BankAccount:
-    def __init__(self, Name):
-        self.Account_no = self.generate_account() 
-        self.Name = Name 
-        self.transaction = []
-        self.balances = 0
-        
-        
-    def generate_account(self):
-        digit = []
-        for _ in range (10):
-            rand_num = random.randint(0, 9)
-            digit.append(str(rand_num))
-        
-        New_account_no = "".join(digit)
-        return New_account_no
-    
-    
-    def deposite (self, amount):
+    def __init__(self, name):
+        self.account_number = self.generate_acct()
+        self.name = name
+        self.transactions = []
+        self.balance = 0
+  
+    def generate_acct(self):
+        digit = [str(random.randint(0, 9)) for _ in range(10)]
+        acct = ''.join(digit)
+        return acct
+  
+    def deposit(self, amount):
         amount = float(amount)
-        self.balances = self.balances + amount
-        self.transaction.append({
-            'Date': datetime.now(),
-            'Type': 'Deposit',
-            'amount':amount,
-            }
-        )
-        
-    def withdrawal (self, amount):
+        self.balance += amount
+        self.transactions.append({
+            'date': datetime.now(),
+            'type': 'deposit',
+            'amount': amount,
+        })
+    
+    def withdraw(self, amount):
         amount = float(amount)
-        self.balances = self.balances - amount
-        self.transaction.append({
-            'Date': datetime.now(),
-            'Type': 'Withdrawal',
-            'amount': amount
-        })  
+        if self.balance >= amount:
+            self.balance -= amount
+            self.transactions.append({
+                'date': datetime.now(),
+                'type': 'withdraw',
+                'amount': amount,
+            })
+        else:
+            print("Insufficient balance")
     
-    def transfer(self, bank_account):
-        pass
+    def check_balance(self):
+        return self.balance  
     
-    def check_balances (self):
-        return self.balances
+    def statement(self):
+        print(f'Account No: {self.account_number} --- Name: {self.name}')
+        for transaction in self.transactions:
+            print(f"Date: {transaction['date']} - Type: {transaction['type']} - Amount: {transaction['amount']}\n")
+
+class CurrentAccount(BankAccount):
+    def deposit(self, amount):
+        tax = amount * tax_amount
+        super().deposit(amount - tax)
+        self.transactions.append({
+            "date": datetime.now(),
+            "type": 'tax',
+            'amount': tax,
+        })
     
+    def withdraw(self, amount):
+        tax = amount * tax_amount
+        if self.balance >= (amount + tax):
+            super().withdraw(amount - tax)
+            self.transactions.append({
+                "date": datetime.now(),
+                "type": 'tax',
+                'amount': tax,
+            })
+        else:
+            print("Insufficient balance")
+
+class FixedAccount(BankAccount):
+    def __init__(self, name):
+        super().__init__(name)
+        self.locked_until = fixed_date
+
+    def withdraw(self, amount):
+        if datetime.now().date() < self.locked_until:
+            print(f"Account is locked until {self.locked_until}. Withdrawal not allowed.")
+        else:
+            super().withdraw(amount)
+
+    def unlock(self):
+        if datetime.now().date() >= self.locked_until:
+            return True
+        return False
+  
+    def statement(self):
+        print(f'Account No: {self.account_number} --- Name: {self.name}')
+        for transaction in self.transactions:
+            print(f"Date: {transaction['date']} - Type: {transaction['type']} - Amount: {transaction['amount']}\n")
+
+# Test statements for Current and Fixed accounts
+current_account = CurrentAccount("Alice")
+current_account.deposit(200)
+current_account.withdraw(50)
+print("Current Account Statement:")
+current_account.statement()
+
+fixed_account = FixedAccount("Bob")
+fixed_account.deposit(500)
+fixed_account.withdraw(100)  # Should print that withdrawal is not allowed
+print("Fixed Account Statement:")
+fixed_account.statement()
+import random
+from datetime import datetime, date
+
+# Global variable for fixed date and tax amount
+fixed_date = date(2025, 4, 24)
+tax_amount = 0.05
+
+class BankAccount:
+    def __init__(self, name):
+        self.account_number = self.generate_acct()
+        self.name = name
+        self.transactions = []
+        self.balance = 0
+  
+    def generate_acct(self):
+        digit = [str(random.randint(0, 9)) for _ in range(10)]
+        acct = ''.join(digit)
+        return acct
+  
+    def deposit(self, amount):
+        amount = float(amount)
+        self.balance += amount
+        self.transactions.append({
+            'date': datetime.now(),
+            'type': 'deposit',
+            'amount': amount,
+        })
     
-    def print_transactions(self):
-        for transaction in self.transaction:
-            print(f"\n{transaction['date']}: {transaction['type']} of {transaction['amount']}")
-
+    def withdraw(self, amount):
+        amount = float(amount)
+        if self.balance >= amount:
+            self.balance -= amount
+            self.transactions.append({
+                'date': datetime.now(),
+                'type': 'withdraw',
+                'amount': amount,
+            })
+        else:
+            print("Insufficient balance")
     
-    def Print_statement (self):
-        print('_________________________________________________________________________')  
-        print(f'\nThe account statement for {self.Name}, Account number {self.Account_no}') 
-        
-        for transactions in self.transaction:
-            print(f'\n Time:-{transactions['Date']} ---Type:- {transactions['Type']} ---Amount:- {transactions['amount']}')
+    def check_balance(self):
+        return self.balance  
     
+    def statement(self):
+        print(f'Account No: {self.account_number} --- Name: {self.name}')
+        for transaction in self.transactions:
+            print(f"Date: {transaction['date']} - Type: {transaction['type']} - Amount: {transaction['amount']}\n")
 
-class SavingAccount(BankAccount):
-    pass
+class CurrentAccount(BankAccount):
+    def deposit(self, amount):
+        tax = amount * tax_amount
+        super().deposit(amount - tax)
+        self.transactions.append({
+            "date": datetime.now(),
+            "type": 'tax',
+            'amount': tax,
+        })
+    
+    def withdraw(self, amount):
+        tax = amount * tax_amount
+        if self.balance >= (amount + tax):
+            super().withdraw(amount - tax)
+            self.transactions.append({
+                "date": datetime.now(),
+                "type": 'tax',
+                'amount': tax,
+            })
+        else:
+            print("Insufficient balance")
 
+class FixedAccount(BankAccount):
+    def __init__(self, name):
+        super().__init__(name)
+        self.locked_until = fixed_date
 
-Acc1 = AccountInfo ('Harry')
-Acc2 = AccountInfo('james')
-print(Acc1)
-print(Acc2)
-#Acc1.deposite(input('\nEnter your amount:'))
-#Acc2.deposite(input('\nEnter your amount:'))
-Acc1.Print_statement()
-Acc2.Print_statement()
-print(ACC_fixed)
+    def withdraw(self, amount):
+        if datetime.now().date() < self.locked_until:
+            print(f"Account is locked until {self.locked_until}. Withdrawal not allowed.")
+        else:
+            super().withdraw(amount)
 
+    def unlock(self):
+        if datetime.now().date() >= self.locked_until:
+            return True
+        return False
+  
+    def statement(self):
+        print(f'Account No: {self.account_number} --- Name: {self.name}')
+        for transaction in self.transactions:
+            print(f"Date: {transaction['date']} - Type: {transaction['type']} - Amount: {transaction['amount']}\n")
 
+# Test statements for Current and Fixed accounts
+current_account = CurrentAccount("Alice")
+current_account.deposit(200)
+current_account.withdraw(50)
+print("Current Account Statement:")
+current_account.statement()
 
+fixed_account = FixedAccount("Bob")
+fixed_account.deposit(500)
+fixed_account.withdraw(100)  # Should print that withdrawal is not allowed
+print("Fixed Account Statement:")
+fixed_account.statement()
